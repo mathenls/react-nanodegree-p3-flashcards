@@ -1,42 +1,74 @@
-import { AsyncStorage } from 'react-native'
+import {
+    AsyncStorage
+} from 'react-native'
 import map from 'lodash/map'
+import mapKeys from 'lodash/mapKeys'
+import omit from 'lodash/omit'
+import { Container } from 'unstated'
+
 const generateId = require('uuid/v4');
 
 const DECK_KEY = "DECK"
 
-export class DeckStore {
+/*
+{
+    React: {
+        title: 'React',
+        questions: [
+            {
+                question: 'What is React?',
+                answer: 'A library for managing user interfaces'
+            },
+            {
+                question: 'Where do you make Ajax requests in React?',
+                answer: 'The componentDidMount lifecycle event'
+            }
+        ]
+    },
+    JavaScript: {
+        title: 'JavaScript',
+        questions: [
+            {
+                question: 'What is a closure?',
+                answer: 'The combination of a function and the lexical environment within which that function was declared.'
+            }
+        ]
+    }
+}
+*/
 
-    getDeck = async (id) => {
-        const decks = await AsyncStorage.getItem(DECK_KEY)
-        const selected = decks[id]
-        return {
-            id,
-            ...selected
-        }
+export class DeckStore extends Container {
+
+    state = {
+        decks: {}
     }
 
-    getDecks = async () => {
-        const decks = (await AsyncStorage.getItem(DECK_KEY)) || []
-        return map(decks, (v, k) => ({
-            id: k,
-            ...v
-        }))
+    async loadDecks() {
+        const decks = JSON.parse(await AsyncStorage.getItem(DECK_KEY)) || {}
+        this.setState({
+            decks
+        })
     }
+
+    getDeck = async (id) => this.state.decks[id]
 
     addDeck = async (deckTitle) => {
         const id = generateId()
         const value = {
             title: deckTitle,
             questions: []
-        } 
-        await AsyncStorage.setItem(DECK_KEY, JSON.stringify({
+        }
+        const curDecks = this.state.decks
+        const decks = {
+            ...curDecks,
             [id]: value
-        }))
+        }
+        await AsyncStorage.setItem(DECK_KEY, JSON.stringify(decks))
+        await this.setState({ decks })
         return id
     }
 
     addCardToDeck = (id, card) => {
-        const decks = getDecks()
         // TODO
     }
 
