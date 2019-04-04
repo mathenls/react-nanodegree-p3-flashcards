@@ -10,13 +10,7 @@ const Navigator = createStackNavigator({
     AddDeck: AddDeckScreen
 }, {
     headerMode: 'screen',
-    initialRouteName: 'List',
-    navigationOptions: {
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-            color: 'white'
-        }
-    }
+    initialRouteName: 'List'
 })
 
 const NavContainer = createAppContainer(Navigator)

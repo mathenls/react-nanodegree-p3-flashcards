@@ -1,9 +1,6 @@
 import {
     AsyncStorage
 } from 'react-native'
-import map from 'lodash/map'
-import mapKeys from 'lodash/mapKeys'
-import omit from 'lodash/omit'
 import { Container } from 'unstated'
 
 const generateId = require('uuid/v4');
@@ -45,12 +42,12 @@ export class DeckStore extends Container {
 
     async loadDecks() {
         const decks = JSON.parse(await AsyncStorage.getItem(DECK_KEY)) || {}
-        this.setState({
+        await this.setState({
             decks
         })
     }
 
-    getDeck = async (id) => this.state.decks[id]
+    getDeck = (id) => this.state.decks[id]
 
     addDeck = async (deckTitle) => {
         const id = generateId()

@@ -81,6 +81,9 @@ class _ListScreen extends React.Component {
             <Container>
                 { decks ? (
                     <FlatList
+                        style={{
+                            marginBottom: 64
+                        }}
                         data={decks}
                         keyExtractor={(i) => i.id}
                         renderItem={this.renderItem}
