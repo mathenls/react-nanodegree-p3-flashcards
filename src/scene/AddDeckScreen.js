@@ -31,7 +31,7 @@ class _AddDeckScreen extends React.Component {
         deck: ''
     }
 
-    onAddCard = () => {
+    onAddDeck = () => {
         this.deckStore.addDeck(this.state.deck)
         this.props.navigation.pop()
     }
@@ -48,7 +48,7 @@ class _AddDeckScreen extends React.Component {
                 <MyButton
                     disabled={this.state.deck.length <= 4}
                     title="Submit"
-                    onPress={this.onAddCard}
+                    onPress={this.onAddDeck}
                 />
             </Container>
         )

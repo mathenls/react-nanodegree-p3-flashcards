@@ -55,18 +55,30 @@ export class DeckStore extends Container {
             title: deckTitle,
             questions: []
         }
-        const curDecks = this.state.decks
+        const curDecks = this.state.decks ? this.state.decks : {}
         const decks = {
             ...curDecks,
             [id]: value
         }
-        await AsyncStorage.setItem(DECK_KEY, JSON.stringify(decks))
+        await this.saveDecksToAsyncStorage(decks)
         await this.setState({ decks })
         return id
     }
 
-    addCardToDeck = (id, card) => {
-        // TODO
+    saveDecksToAsyncStorage = async (decks) => {
+        await AsyncStorage.setItem(DECK_KEY, JSON.stringify(decks))
+    }
+    
+    clearAsyncStorage = async () => {
+        await AsyncStorage.removeItem(DECK_KEY)
+    }
+
+    addCardToDeck = async (id, card) => {
+        const decks = JSON.parse(await AsyncStorage.getItem(DECK_KEY)) || {}
+        const deck = decks[id]
+        deck.questions.push(card)
+        decks[id] = deck
+        await this.saveDecksToAsyncStorage(decks)
     }
 
 }

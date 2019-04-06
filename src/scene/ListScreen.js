@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components/native'
-import { FlatList } from 'react-native'
+import { FlatList, TouchableHighlight } from 'react-native'
 import { Card } from '../component/Card';
 import { LoadingModal } from '../component/LoadingModal';
 import { DeckStore } from '../store/DeckStore';
@@ -65,10 +65,14 @@ class _ListScreen extends React.Component {
     renderItem = ({ item: deck }) => {
         const cardCount = deck.questions.length
         return (
-            <DeckContainer>
-                <DeckTitle>{ deck.title }</DeckTitle>
-                <DeckCardCount>{ cardCount + (cardCount == 1 ? ' card' : ' cards') }</DeckCardCount>
-            </DeckContainer>
+            <TouchableHighlight onPress={() => this.props.navigation.navigate('Deck', { 
+                deck: deck 
+            })}>
+                <DeckContainer >
+                    <DeckTitle>{ deck.title }</DeckTitle>
+                    <DeckCardCount>{ cardCount + (cardCount == 1 ? ' card' : ' cards') }</DeckCardCount>
+                </DeckContainer>
+            </TouchableHighlight>
         )
     }
 
