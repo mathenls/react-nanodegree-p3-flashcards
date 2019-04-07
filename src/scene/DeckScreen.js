@@ -1,10 +1,9 @@
 import React from 'react'
 import styled from 'styled-components/native'
-import { DeckStore } from '../store/DeckStore';
-import { MyButton } from '../component/MyButton';
-import { MyTextInput } from '../component/MyTextInput';
-import { Theme } from '../theme';
-import { Subscribe } from 'unstated';
+import { DeckStore } from '../store/DeckStore'
+import MyButton from '../component/MyButton'
+import { Theme } from '../theme'
+import { Subscribe } from 'unstated'
 
 const Container = styled.View`
     flex-direction: column;
@@ -50,17 +49,18 @@ class _DeckScreen extends React.Component {
         if (deck && deck.questions) {
             cardCount = deck.questions.length
         }
-        
+
         return deck && (
             <Container>
                 <Title>{deck.title}</Title>
                 <DeckCardCount>{ cardCount + (cardCount == 1 ? ' card' : ' cards') }</DeckCardCount>
                 <MyButton
-                    title="Add Card"
+                    text="Add Card"
                     onPress={() => this.props.navigation.navigate('AddCard', { deck })}
                 />
                 <MyButton
-                    title="Start Quiz"
+                    text="Start Quiz"
+                    disabled={!cardCount}
                     onPress={() => this.props.navigation.navigate('Quiz', { questions: deck.questions })}
                 />
             </Container>
@@ -76,6 +76,7 @@ export const DeckScreen = (props) => (
 )
 
 DeckScreen.navigationOptions = {
+    title: 'Deck',
     headerTitleStyle: {
         color: 'white'
     },

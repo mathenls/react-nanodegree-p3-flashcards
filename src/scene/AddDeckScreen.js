@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components/native'
 import { DeckStore } from '../store/DeckStore';
-import { MyButton } from '../component/MyButton';
+import MyButton from '../component/MyButton';
 import { MyTextInput } from '../component/MyTextInput';
 import { Theme } from '../theme';
 import { Subscribe } from 'unstated';
@@ -31,9 +31,9 @@ class _AddDeckScreen extends React.Component {
         deck: ''
     }
 
-    onAddDeck = () => {
-        this.deckStore.addDeck(this.state.deck)
-        this.props.navigation.pop()
+    onAddDeck = async () => {
+        const deck = await this.deckStore.addDeck(this.state.deck)
+        this.props.navigation.navigate('Deck', { deck })
     }
 
     render() {
@@ -46,8 +46,8 @@ class _AddDeckScreen extends React.Component {
                     value={this.state.deck}
                 />
                 <MyButton
-                    disabled={this.state.deck.length <= 4}
-                    title="Submit"
+                    disabled={this.state.deck.length === 0}
+                    text="Submit"
                     onPress={this.onAddDeck}
                 />
             </Container>

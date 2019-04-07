@@ -62,13 +62,13 @@ export class DeckStore extends Container {
         }
         await this.saveDecksToAsyncStorage(decks)
         await this.setState({ decks })
-        return id
+        return {id, ...value}
     }
 
     saveDecksToAsyncStorage = async (decks) => {
         await AsyncStorage.setItem(DECK_KEY, JSON.stringify(decks))
     }
-    
+
     clearAsyncStorage = async () => {
         await AsyncStorage.removeItem(DECK_KEY)
     }

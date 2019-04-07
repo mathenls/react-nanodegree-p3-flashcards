@@ -1,13 +1,14 @@
 import React from 'react'
 import styled from 'styled-components/native'
 import { FlatList, TouchableHighlight } from 'react-native'
-import { Card } from '../component/Card';
-import { LoadingModal } from '../component/LoadingModal';
-import { DeckStore } from '../store/DeckStore';
-import { MyButton } from '../component/MyButton';
-import { Theme } from '../theme';
-import { Subscribe } from 'unstated';
-import map from 'lodash/map';
+import { Card } from '../component/Card'
+import { LoadingModal } from '../component/LoadingModal'
+import { DeckStore } from '../store/DeckStore'
+import { NotificationStore } from '../store/NotificationStore'
+import MyButton from '../component/MyButton'
+import { Theme } from '../theme'
+import { Subscribe } from 'unstated'
+import map from 'lodash/map'
 
 const Container = styled.View`
     flex-direction: column;
@@ -43,12 +44,15 @@ class _ListScreen extends React.Component {
         return this.props.deckStore
     }
 
+    notificationStore = new NotificationStore()
+
     state = {
         loading: true
     }
 
     componentDidMount() {
         this.reloadDecks()
+        this.notificationStore.setLocalNotification()
     }
 
     openAddDeckScreen = () => {
@@ -65,8 +69,8 @@ class _ListScreen extends React.Component {
     renderItem = ({ item: deck }) => {
         const cardCount = deck.questions.length
         return (
-            <TouchableHighlight onPress={() => this.props.navigation.navigate('Deck', { 
-                deck: deck 
+            <TouchableHighlight onPress={() => this.props.navigation.navigate('Deck', {
+                deck: deck
             })}>
                 <DeckContainer >
                     <DeckTitle>{ deck.title }</DeckTitle>
@@ -94,7 +98,7 @@ class _ListScreen extends React.Component {
                     />
                 ) : null }
                 <AddContainer>
-                    <MyButton style={{ width: '100%' }} title="New Deck" onPress={this.openAddDeckScreen}/>
+                    <MyButton style={{ width: '100%' }} text="New Deck" onPress={this.openAddDeckScreen}/>
                 </AddContainer>
                 <LoadingModal visible={this.state.loading}/>
             </Container>

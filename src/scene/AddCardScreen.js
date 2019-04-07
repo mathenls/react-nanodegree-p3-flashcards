@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components/native'
 import { DeckStore } from '../store/DeckStore';
-import { MyButton } from '../component/MyButton';
+import MyButton from '../component/MyButton';
 import { MyTextInput } from '../component/MyTextInput';
 import { Theme } from '../theme';
 import { Subscribe } from 'unstated';
@@ -36,22 +36,25 @@ class _AddCardScreen extends React.Component {
 
     render() {
         const deck = this.props.navigation.getParam('deck', 'no deck selected')
+        const { question, answer } = this.state
+
         return (
             <Container>
                 <MyTextInput
                     style={{ marginVertical: 16, width: '90%', fontSize: 14 }}
                     onChangeText={question => this.setState({ question })}
-                    value={this.state.question}
+                    value={question}
                     placeholder='Question'
                 />
                 <MyTextInput
                     style={{ marginVertical: 16, width: '90%', fontSize: 14 }}
                     onChangeText={answer => this.setState({ answer })}
-                    value={this.state.answer}
+                    value={answer}
                     placeholder='Answer'
                 />
                 <MyButton
-                    title="Submit"
+                    disabled={!question || !answer}
+                    text="Submit"
                     onPress={() => this.onAddCard(deck.id)}
                 />
             </Container>

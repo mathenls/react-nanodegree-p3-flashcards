@@ -5,23 +5,12 @@ import {
   Text,
   View
 } from 'react-native';
-import { MyButton } from '../component/MyButton'
+import MyButton from '../component/MyButton'
 import generateId from 'uuid/v4'
 import Swiper from 'react-native-swiper'
-import styled from 'styled-components/native'
 import { QuestionSlide } from '../component/QuestionSlide'
-
-const Container = styled.View`
-    flex: 1;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 999;
-    justify-content: center;
-    align-items: center;
-    padding: 48px;
-`
+import { NotificationStore } from '../store/NotificationStore'
+import { Theme } from '../theme'
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -62,14 +51,24 @@ export default class QuizScreen extends Component {
     correctQuestions: 0
   }
   _swiper = {}
-
+  notificationStore = new NotificationStore()
   componentDidMount() {
     let questions = this.props.navigation.getParam('questions', 'no questions')
     questions = questions.map((q) => ({...q, showingAnswer: false, id: generateId()}))
-      
     this.setState({
       questions
     })
+  }
+
+  toggleShowAnswer = (question) => {
+    this.setState({
+      questions: this.state.questions.map((q) => {
+          if (q.id === question.id) {
+              q.showingAnswer = !q.showingAnswer
+          }
+          return q
+        })
+      })
   }
 
   correctAnswer = () => {
@@ -80,7 +79,24 @@ export default class QuizScreen extends Component {
     })
   }
 
-  returnFinalMessage = (percentage) => {
+  swipeSlider = () => {
+    this._swiper.scrollBy(1)
+  }
+
+  restartQuiz = () => {
+    const { questions } = this.state
+    if (this._swiper && this._swiper.scrollView) {
+        this.setState({
+          correctQuestions: 0,
+          questions: this.state.questions.map((q) => ({...q, showingAnswer: false}))
+        }, () => {
+          this._swiper.scrollBy(-(questions.length))
+        })
+    }
+  }
+
+  finalizeQuiz = (percentage) => {
+    this.notificationStore.cancelNotifications()
     if (percentage === 100) {
       return `Perfect! You are rocking this deck's subject!`
     } else if (percentage >= 75) {
@@ -94,33 +110,59 @@ export default class QuizScreen extends Component {
 
   render() {
     const { questions, correctQuestions } = this.state
-    const percentage = (correctQuestions / questions.length) * 100
+    const percentage = ((correctQuestions / questions.length) * 100).toFixed(2)
+    const finalPage = (
+      <View key='results' style={styles.slide1}>
+        <Text style={styles.text}>
+          {`You got ${percentage}% of the questions correct`}
+        </Text>
+        <Text style={styles.text}>
+          {this.finalizeQuiz(percentage)}
+        </Text>
+        <MyButton
+            text='Restart Quiz'
+            onPress={this.restartQuiz}
+        />
+        <MyButton
+            text='Back to Deck'
+            onPress={() => this.props.navigation.pop()}
+        />
+      </View>
+    )
 
     return (
-        <Swiper 
-          ref={(swiper) => {this._swiper = swiper}} 
-          showsPagination={false} 
-          showsButtons={false} 
+        <Swiper
+          ref={(swiper) => {this._swiper = swiper}}
+          showsPagination={false}
+          showsButtons={false}
           style={styles.wrapper}
           loop={false}
         >
           {questions.map((question, index) => {
             return (
-              <QuestionSlide question={question} index={index} />
+              <QuestionSlide
+                key={question.id}
+                question={question}
+                cardCount={questions.length}
+                toggleShowAnswer={this.toggleShowAnswer}
+                swipeSlider={this.swipeSlider}
+                onCorrectAnswer={this.correctAnswer}
+                index={index}
+              />
             )
-          }).concat(
-            <View key='results' style={styles.slide1}>
-              <Text style={styles.text}>
-                {`You got ${percentage}% of the questions correct!`}
-              </Text>
-              <Text style={styles.text}>
-                {this.returnFinalMessage(percentage)}
-              </Text>
-            </View>
-          )}
+          }).concat(finalPage)}
         </Swiper>
     )
   }
 }
 
 AppRegistry.registerComponent('p3-flashcards', () => Swiper)
+QuizScreen.navigationOptions = {
+  title: 'Quiz',
+  headerTitleStyle: {
+      color: 'white'
+  },
+  headerStyle: {
+      backgroundColor: Theme.primaryColor,
+  },
+}

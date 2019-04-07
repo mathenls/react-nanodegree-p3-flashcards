@@ -4,7 +4,8 @@ import {
     StyleSheet,
     Text,
     View
-  } from 'react-native';
+} from 'react-native';
+import MyButton from '../component/MyButton'
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -41,40 +42,30 @@ const styles = StyleSheet.create({
 })
 
 export const QuestionSlide = (props) => {
-    const { question, index } = props
+    const { question, index, cardCount, toggleShowAnswer, swipeSlider, onCorrectAnswer } = props
+
     return (
         <View key={question.id} style={styles.slide1}>
             <Text style={styles.indexes}>
-                {`Question ${index + 1} of ${questions.length}`}
+                {`Question ${index + 1} of ${cardCount}`}
             </Text>
-            {question.showingAnswer 
-                ? (<Text style={styles.text}>{question.answer}</Text>) 
+            {question.showingAnswer
+                ? (<Text style={styles.text}>{question.answer}</Text>)
                 : (<Text style={styles.text}>{question.question}</Text>)
             }
             <MyButton
-                title={question.showingAnswer ? 'Hide Answer' : 'Show Answer'}
-                onPress={() => {
-                    this.setState({
-                    questions: questions.map((q) => {
-                            if (q.id === question.id) {
-                                q.showingAnswer = !q.showingAnswer
-                            }
-                            return q
-                        })
-                    })
-                }}
+                text={question.showingAnswer ? 'Hide Answer' : 'Show Answer'}
+                onPress={() => toggleShowAnswer(question)}
             />
             <MyButton
                 disabled={!question.showingAnswer}
-                title='Correct'
-                onPress={this.correctAnswer}
+                text='Correct'
+                onPress={() => onCorrectAnswer(index)}
             />
             <MyButton
                 disabled={!question.showingAnswer}
-                title='Incorrect'
-                onPress={() => {
-                    this._swiper.scrollBy(1)
-                }}
+                text='Incorrect'
+                onPress={() => swipeSlider(index)}
             />
         </View>
     )
